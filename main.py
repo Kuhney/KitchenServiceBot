@@ -239,7 +239,7 @@ async def kit_next(channel):
     await channel.send(embed=embed)
 
 
-@tasks.loop(seconds=15)
+@tasks.loop(minutes=30)
 async def service_routine():
     global save
     global current_worker
