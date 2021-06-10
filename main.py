@@ -76,7 +76,7 @@ async def on_ready():
 async def kit_setup(ctx: Context, *users: discord.User):
     if ctx.author == client.user:
         return
-    if users:
+    if len(users) >= 2:
         global main_channel
         global worker_list
         global save
@@ -103,7 +103,7 @@ async def kit_setup(ctx: Context, *users: discord.User):
         service_routine.stop()
         service_routine.start()
     else:
-        await ctx.send("Bitte Personen angeben")
+        await ctx.send("Bitte mindestens 2 Personen angeben")
 
 
 @client.command(name="start")
@@ -193,10 +193,10 @@ async def kit_check(ctx: Context):
                 embed.add_field(name="momentaner Küchendienst", value=value, inline=False)
             else:
                 worker_string = worker_string + "- <@" + str(worker) + ">\n"
-                if not current_helper:
+                if current_helper:
                     for helper in save["helper"]:
                         worker_string += "- <@" + str(helper) + ">  `Aushilfe`"
-        embed.add_field(name="Pause", value=worker_string, inline=False)
+        embed.add_field(name="Pause", value="worker_string", inline=False)
 
     except AttributeError:
         await ctx.send("Kein Küchendienst eingerichtet!")
