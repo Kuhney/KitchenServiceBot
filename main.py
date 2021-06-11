@@ -10,7 +10,7 @@ current_worker = str()
 current_helper = str()
 main_channel = 0
 reminded = False
-client = commands.Bot(command_prefix=["kit "], case_insensitive=True)
+client = commands.Bot(command_prefix=["kit ", "Kit ", "KIt ", "KIT ", "kIt ", "kIT ", "kiT "], case_insensitive=True)
 
 
 def set_day(day: str):
@@ -196,12 +196,13 @@ async def kit_check(ctx: Context):
                 if current_helper:
                     for helper in save["helper"]:
                         worker_string += "- <@" + str(helper) + ">  `Aushilfe`"
-        embed.add_field(name="Pause", value="worker_string", inline=False)
+        embed.add_field(name="Pause", value=worker_string, inline=False)
 
     except AttributeError:
         await ctx.send("Kein Küchendienst eingerichtet!")
     else:
         print("Küchendienst-Check wurde angefordert")
+        print("Save: " + str(save))
         await ctx.send(embed=embed)
 
 
