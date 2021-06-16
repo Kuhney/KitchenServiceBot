@@ -176,6 +176,9 @@ async def kit_set_time(ctx: Context, *args):
 
 @client.command(name="check")
 async def kit_check(ctx: Context):
+
+    await service_routine()
+
     global main_channel
     main_channel = ctx.channel.id
     global save
@@ -260,6 +263,14 @@ async def service_routine():
         print("not notified")
     if weekday != save["time"][0]:
         reminded = False
+
+
+@client.command(name="remind")
+async def reset_reminded(ctx: Context):
+    global reminded
+    reminded = False
+    print("reminded = false")
+    await ctx.send("Timer Abfrage zurückgesetzt. Bei Problemen mit Remindern")
 
 
 @client.command(name="h")
