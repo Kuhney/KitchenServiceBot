@@ -9,8 +9,9 @@ counter = 0
 current_worker = str()
 current_helper = str()
 main_channel = 0
-reminded = False
-client = commands.Bot(command_prefix=["kit ", "Kit ", "KIt ", "KIT ", "kIt ", "kIT ", "kiT "], case_insensitive=True)
+global is_starting
+client = commands.Bot(command_prefix=["kit ", "Kit ", "KIt ", "KIT ", "kIt ", "kIT ", "kiT "],
+                      case_insensitive=True, help_command=None)
 
 
 def set_day(day: str):
@@ -52,6 +53,12 @@ def convert_daynumber_to_day(day: int):
     return value
 
 
+def save_json():
+    with open("savefile.json", "w") as savefile_write:
+        json.dump(save, savefile_write)
+        savefile_write.close()
+
+
 try:
     with open("savefile.json") as savefile_read:
         save = json.load(savefile_read)
@@ -69,7 +76,38 @@ with open("token.json") as json_file:
 
 @client.event
 async def on_ready():
+    global is_starting
+    is_starting = True
     print('Bot has logged in as {0.user}'.format(client))
+    save.update({"remind": False})
+    await service_routine.start()
+
+
+@tasks.loop(seconds=8)
+async def service_routine():
+    global save
+    global current_worker
+    global is_starting
+    save_json()
+
+    weekday = datetime.date.today().weekday()
+    now = datetime.datetime.now().hour
+    if weekday != save["time"][0]:
+        save.update({"remind": True})
+    if not is_starting:
+        if weekday == save["time"][0] and now >= save["time"][1] and save["remind"]:
+            save.update({"remind": False})
+            print("Neuer Küchendienst wurde mitgeteilt")
+            try:
+                channel = client.get_channel(main_channel)
+                await kit_next(channel)
+            except AttributeError:
+                print("No text send")
+        else:
+            print("not notified")
+    else:
+        is_starting = False
+        #print("Bot ist am starten und Küchendienst wird sich nicht ändern")
 
 
 @client.command(name="setup", pass_context=True)
@@ -102,33 +140,34 @@ async def kit_setup(ctx: Context, *users: discord.User):
         service_routine.cancel()
         service_routine.stop()
         service_routine.start()
+        save_json()
     else:
         await ctx.send("Bitte mindestens 2 Personen angeben")
 
 
-@client.command(name="start")
-async def kit_start(ctx: Context):
-    if ctx.author == client.user:
-        return
-
-    worker_string = ""
-    global main_channel
-    global worker_list
-    global save
-    global current_worker
-    main_channel = ctx.channel.id
-
-    for worker in save["worker"]:
-        if save["worker"][worker] == 1:
-            current_worker = worker
-        worker_string = worker_string + "- <@" + str(worker) + ">\n"
-    embed = discord.Embed(title="Küchendiener:", description=worker_string)
-    embed.set_author(name="Küchendienst wurde erstellt")
-
-    print("Küchendienst erstellt mit " + str(save))
-    await ctx.send(embed=embed)
-    service_routine.stop()
-    service_routine.start()
+# @client.command(name="start")
+# async def kit_start(ctx: Context):
+#     if ctx.author == client.user:
+#         return
+#
+#     worker_string = ""
+#     global main_channel
+#     global worker_list
+#     global save
+#     global current_worker
+#     main_channel = ctx.channel.id
+#
+#     for worker in save["worker"]:
+#         if save["worker"][worker] == 1:
+#             current_worker = worker
+#         worker_string = worker_string + "- <@" + str(worker) + ">\n"
+#     embed = discord.Embed(title="Küchendiener:", description=worker_string)
+#     embed.set_author(name="Küchendienst wurde erstellt")
+#
+#     print("Küchendienst erstellt mit " + str(save))
+#     await ctx.send(embed=embed)
+#     service_routine.stop()
+#     service_routine.start()
 
 
 @client.command(name="hilfe")
@@ -140,7 +179,7 @@ async def kit_hilfe(ctx: Context, arg: discord.User):
         embed = discord.Embed(title="Aushilfe hinzugefügt")
         embed.add_field(name=arg.display_name, value="Ist jetzt eine Aushilfekraft")
 
-        print("Aushilfe wurde hinzugefügt")
+        print(str(arg.display_name) + "wurde als Aushilfe hinzugefügt")
         await ctx.send(embed=embed)
     else:
         await ctx.send("Bitte gebe den Helfer an")
@@ -166,22 +205,23 @@ async def kit_set_time(ctx: Context, *args):
         if set_day(args[0]) == -1 or int(args[1]) not in range(0, 24):
             await ctx.send("Bitte halte dich ans Format")
         else:
+            save["remind"] = True
             save["time"][0] = set_day(args[0])
             day = convert_daynumber_to_day(save["time"][0])
             save["time"][1] = int(args[1])
             await ctx.send(f"Küchendienst wechselt am {day} um {args[1]} Uhr")
-
-    print("Wechselzeit wurde umgestellt")
+            print(f"Wechselzeit wurde auf {day}-{args[1]} umgestellt")
+            save_json()
 
 
 @client.command(name="check")
 async def kit_check(ctx: Context):
-
+    global main_channel
+    global save
+    global current_helper
     await service_routine()
 
-    global main_channel
     main_channel = ctx.channel.id
-    global save
     worker_string = ""
 
     embed = discord.Embed(title="Küchendiener", color=0xffffff)
@@ -196,14 +236,16 @@ async def kit_check(ctx: Context):
                 embed.add_field(name="momentaner Küchendienst", value=value, inline=False)
             else:
                 worker_string = worker_string + "- <@" + str(worker) + ">\n"
-                if current_helper:
-                    for helper in save["helper"]:
-                        worker_string += "- <@" + str(helper) + ">  `Aushilfe`"
+        if not current_helper:
+            for helper in save["helper"]:
+                worker_string += "- <@" + str(helper) + ">  `Aushilfe`"
         embed.add_field(name="Pause", value=worker_string, inline=False)
 
     except AttributeError:
         await ctx.send("Kein Küchendienst eingerichtet!")
     else:
+        embed.add_field(name="Wechselzeit", value="Am " + convert_daynumber_to_day(save["time"][0]) + " um " +
+                                                  str(save["time"][1]) + "Uhr", inline=False)
         print("Küchendienst-Check wurde angefordert")
         print("Save: " + str(save))
         await ctx.send(embed=embed)
@@ -231,54 +273,28 @@ async def kit_next(channel):
     for helper in save["helper"]:
         save["helper"][helper] += 1
         if save["helper"][helper] == len(save["worker"])+1:
-            print("{} hilft diese Woche aus".format(helper))
             save["helper"][helper] = 0
             description = description + "\n<@" + str(helper) + ">" + " hilft diese Woche aus!"
             current_helper = helper
         else:
             current_helper = None
 
+    save_json()
     print("Küchendienst wurde aktualisiert")
+    if current_helper:
+        print(str(current_worker) + " arbeitet und " + str(current_helper) + "hilft")
+    else:
+        print(str(current_worker) + " arbeitet und niemand hilft")
     embed = discord.Embed(title="Küchendienst wurde aktualisiert", description=description)
     await channel.send(embed=embed)
 
 
-@tasks.loop(minutes=30)
-async def service_routine():
-    global save
-    global current_worker
-    with open("savefile.json", "w") as savefile_write:
-        json.dump(save, savefile_write)
-        savefile_write.close()
-
-    weekday = datetime.date.today().weekday()
-    now = datetime.datetime.now().hour
-    global reminded
-    if weekday == save["time"][0] and now >= save["time"][1] and not reminded:
-        reminded = True
-        print("Küchendienst wurde mitgeteilt")
-        channel = client.get_channel(main_channel)
-        await kit_next(channel)
-    else:
-        print("not notified")
-    if weekday != save["time"][0]:
-        reminded = False
-
-
-@client.command(name="remind")
-async def reset_reminded(ctx: Context):
-    global reminded
-    reminded = False
-    print("reminded = false")
-    await ctx.send("Timer Abfrage zurückgesetzt. Bei Problemen mit Remindern")
-
-
-@client.command(name="h")
+@client.command(name="help")
 async def kit_help(ctx: Context):
     global main_channel
     main_channel = ctx.channel.id
     embed = discord.Embed(title="Küchendienst Bot Commands", color=0xffffff)
-    embed.add_field(name="`kit h`", value="Ruft diese Nachricht auf", inline=False)
+    embed.add_field(name="`kit help`", value="Ruft diese Nachricht auf", inline=False)
     embed.add_field(name="`kit setup [@user, ...]`", value="Richtet den Küchendienst ein! Reihenfolge der "
                                                            "angegebenen Benutzer bestimmt "
                                                            "die Küchendienst Reihenfolge", inline=False)
