@@ -83,7 +83,7 @@ async def on_ready():
     await service_routine.start()
 
 
-@tasks.loop(seconds=8)
+@tasks.loop(minutes=30)
 async def service_routine():
     global save
     global current_worker
