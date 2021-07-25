@@ -289,6 +289,15 @@ async def kit_next(channel):
     await channel.send(embed=embed)
 
 
+@client.command(name="helpme")
+async def kit_help(ctx: Context):
+    global current_helper
+    for helper in save["helper"]:
+        current_helper = helper
+        save["helper"][helper] = 0
+    await ctx.send("Aushilfe hilft jetzt mit")
+
+
 @client.command(name="help")
 async def kit_help(ctx: Context):
     global main_channel
