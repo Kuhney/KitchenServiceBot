@@ -95,7 +95,7 @@ async def service_routine():
     if weekday != save["time"][0]:
         save.update({"remind": True})
     if not is_starting:
-        if weekday == save["time"][0] and now >= save["time"][1] and save["remind"]:
+        if weekday == save["time"][0] and now == save["time"][1] and save["remind"]:
             save.update({"remind": False})
             print("Neuer Küchendienst wurde mitgeteilt")
             try:
@@ -314,8 +314,8 @@ async def kit_help(ctx: Context):
     embed.add_field(name="`kit next`", value="Küchendienst wird an nächste Person gereicht")
     embed.add_field(name="`kit time [day] [hour]`", value="Stelle ein wann Küchendienst wechseln soll\n [day] = "
                                                           "mo,di,mi,do,fr,sa,so \n [hour] = 0 - 23", inline=False)
-    embed.add_field(name="`kit hilfe [@user]`", value="Fügt den User als Aushilfe hinzu")
-
+    embed.add_field(name="`kit hilfe [@user]`", value="Fügt den User als Aushilfe hinzu", inline=False)
+    embed.add_field(name="`hit helpme`", value="Küchendienst Aushilfe hilft sofort mit", inline=False)
     print("Küchendienst Hilfe wurde angefordert")
     await ctx.send(embed=embed)
 
