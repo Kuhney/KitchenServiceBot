@@ -9,9 +9,12 @@ counter = 0
 current_worker = str()
 current_helper = str()
 main_channel = 0
+
+intents = discord.Intents.default()
+intents.message_content = True
 global is_starting
 client = commands.Bot(command_prefix=["kit ", "Kit ", "KIt ", "KIT ", "kIt ", "kIT ", "kiT "],
-                      case_insensitive=True, help_command=None)
+                      case_insensitive=True, help_command=None, intents=intents)
 
 
 def set_day(day: str):
