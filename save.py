@@ -11,6 +11,7 @@ class Save:
     change_time_day: Weekday = Weekday.MONDAY
     change_time_time: int = 0
     week_idx: int = 0
+    channel = None
 
     def __init__(self):
         self.load_save_file()
@@ -25,6 +26,7 @@ class Save:
                 self.change_time_day = Weekday(value=save_dict["day"])
                 self.change_time_time = save_dict["time"]
                 self.week_idx = save_dict["week_idx"]
+                self.channel = save_dict["channel"]
         except FileNotFoundError:
             print("No savefile found. Created one")
             self.save_to_file()
@@ -39,6 +41,7 @@ class Save:
                     "day": self.change_time_day.value,
                     "time": self.change_time_time,
                     "week_idx": self.week_idx,
+                    "channel": self.channel
                 },
                 savefile,
                 indent=4
