@@ -3,6 +3,7 @@ import discord
 from cogs.check import Check
 from cogs.help import Help
 from cogs.next import Next
+from cogs.set_helper import SetHelper
 from cogs.setup import Setup
 
 
@@ -15,3 +16,4 @@ class KitchenBot(discord.Bot):
         self.add_cog(Setup(self))
         self.add_cog(Check(self))
         self.add_cog(Next(self))
+        self.add_cog(SetHelper(self))

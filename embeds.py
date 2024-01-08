@@ -15,11 +15,11 @@ class SettingsEmbed:
 
         self.embed = discord.Embed(title="Küchendienst Einstellungen")
 
-        self.embed.add_field(name="Aktiver Küchendienst",
+        self.embed.add_field(name="Küchendienst der Woche",
                              value=active_worker,
                              inline=False)
-        self.embed.add_field(name="Helfer", value=workers, inline=False)
-        self.embed.add_field(name="Aushilfe", value=helpers, inline=False)
+        self.embed.add_field(name="Anstehender Küchendienst", value=workers, inline=False)
+        self.embed.add_field(name="Mögliche Aushilfe", value=helpers, inline=False)
         self.embed.add_field(name="Wechsel am",
                              value=self.save.change_time_day.display_name + " um " + str(
                                  self.save.change_time_time) + " Uhr",
