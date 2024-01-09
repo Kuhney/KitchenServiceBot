@@ -10,7 +10,7 @@ class Next(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @discord.slash_command(guild_ids=[937798823709929502], name="weiter", description="Spult eine Woche vor")
+    @discord.slash_command(name="weiter", description="Spult eine Woche vor")
     async def kit_check(self, ctx: ApplicationContext):
         print("bot answered to |next| command issued by " + ctx.user.display_name)
         save = Save()

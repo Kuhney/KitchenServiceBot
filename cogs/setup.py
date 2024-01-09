@@ -14,7 +14,7 @@ class Setup(commands.Cog):
         self.bot = bot
         self.save = Save()
 
-    @discord.slash_command(guild_ids=[937798823709929502], name="setup", description="Stelle den Küchendienst ein")
+    @discord.slash_command(name="setup", description="Stelle den Küchendienst ein")
     async def flavor(self, ctx: ApplicationContext):
         self.save.channel = ctx.channel_id
         print("bot answered to |setup| command issued by " + ctx.user.display_name)

@@ -7,7 +7,7 @@ class Help(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @discord.slash_command(guild_ids=[937798823709929502], name="help", description="Infos über den Küchendienst Bot")
+    @discord.slash_command(name="help", description="Infos über den Küchendienst Bot")
     async def kit_help(self, ctx: ApplicationContext):
         embed = discord.Embed(title="Küchendienst Bot Commands")
         embed.add_field(name="`/help`", value="Ruft diese Nachricht auf", inline=False)
