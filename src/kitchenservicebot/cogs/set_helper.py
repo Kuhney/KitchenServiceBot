@@ -2,17 +2,16 @@ import discord
 from discord import ApplicationContext
 from discord.ext import commands
 
-from embeds import SettingsEmbed
-from save import Save
+from kitchenservicebot.embeds import SettingsEmbed
+from kitchenservicebot.save import Save
 
 
 class SetHelper(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot) -> None:
         self.bot = bot
 
-    @discord.slash_command(name="aushilfenstart",
-                           description="Aushilfe wird diese Woche starten")
-    async def set_helper(self, ctx: ApplicationContext):
+    @discord.slash_command(name="aushilfenstart", description="Aushilfe wird diese Woche starten")
+    async def set_helper(self, ctx: ApplicationContext) -> None:
         save = Save()
         save.week_idx = 0
         save.current_helper_id = save.helper_ids[0]

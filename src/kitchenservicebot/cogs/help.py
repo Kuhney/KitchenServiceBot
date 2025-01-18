@@ -4,11 +4,11 @@ from discord.ext import commands
 
 
 class Help(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot) -> None:
         self.bot = bot
 
     @discord.slash_command(name="help", description="Infos über den Küchendienst Bot")
-    async def kit_help(self, ctx: ApplicationContext):
+    async def kit_help(self, ctx: ApplicationContext) -> None:
         embed = discord.Embed(title="Küchendienst Bot Commands")
         embed.add_field(name="`/help`", value="Ruft diese Nachricht auf", inline=False)
         embed.add_field(name="`/setup`", value="Richtet den Küchendienst ein!", inline=False)

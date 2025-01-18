@@ -1,6 +1,6 @@
 import json
 
-from enums import Weekday
+from kitchenservicebot.enums import Weekday
 
 
 class Save:
@@ -13,12 +13,12 @@ class Save:
     week_idx: int = 0
     channel = None
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.load_save_file()
 
-    def load_save_file(self):
+    def load_save_file(self) -> None:
         try:
-            with open("savefile.json", "r") as savefile:
+            with open("savefile.json") as savefile:
                 save_dict = json.load(savefile)
                 self.worker_ids = save_dict["workers"]
                 self.current_worker_id = save_dict["current_worker"]
@@ -31,7 +31,7 @@ class Save:
             print("No savefile found. Created one")
             self.save_to_file()
 
-    def save_to_file(self):
+    def save_to_file(self) -> None:
         with open("savefile.json", "w") as savefile:
             json.dump(
                 {
@@ -41,10 +41,10 @@ class Save:
                     "day": self.change_time_day.value,
                     "time": self.change_time_time,
                     "week_idx": self.week_idx,
-                    "channel": self.channel
+                    "channel": self.channel,
                 },
                 savefile,
-                indent=4
+                indent=4,
             )
             savefile.close()
         print("Saved configuration to file")
@@ -52,7 +52,7 @@ class Save:
     def get_user_by_id(self, idx: int) -> str:
         return "<@" + str(idx) + ">"
 
-    def skip_to_new_week(self):
+    def skip_to_new_week(self) -> None:
         self.week_idx += 1
 
         self.current_worker_id = self.worker_ids[0]

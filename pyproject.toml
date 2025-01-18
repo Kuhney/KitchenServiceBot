@@ -1,0 +1,20 @@
+[project]
+name = "kitchenservicebot"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Kuhney", email = "42678994+Kuhney@users.noreply.github.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "apscheduler>=3.11.0",
+    "py-cord>=2.6.1",
+]
+
+[project.scripts]
+kitchenservicebot = "kitchenservicebot:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
