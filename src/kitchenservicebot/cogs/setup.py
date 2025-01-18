@@ -1,3 +1,4 @@
+import logging
 from typing import TYPE_CHECKING
 
 import discord
@@ -7,10 +8,12 @@ from discord.ext import commands
 from kitchenservicebot.embeds import SettingsEmbed
 from kitchenservicebot.enums import Weekday
 from kitchenservicebot.save import Save
-from kitchenservicebot.Scheduler import WeeklyScheduler
+from kitchenservicebot.scheduler import WeeklyScheduler
 
 if TYPE_CHECKING:
     from kitchenservicebot.bot import KitchenBot
+
+logger = logging.getLogger("kitchenbot.cogs")
 
 
 class Setup(commands.Cog):
@@ -21,7 +24,7 @@ class Setup(commands.Cog):
     @discord.slash_command(name="setup", description="Stelle den Küchendienst ein")
     async def flavor(self, ctx: ApplicationContext) -> None:
         self.save.channel = ctx.channel_id
-        print("bot answered to |setup| command issued by " + ctx.user.display_name)
+        logger.info("bot answered to |setup| command issued by %s", ctx.user.display_name)
         await ctx.respond(
             "Wähle Helfer in der gewünschten Reihenfolge!",
             view=SelectWorkerView(self.save, self.bot.scheduler),

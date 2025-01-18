@@ -1,0 +1,36 @@
+{
+    "version": 1,
+    "disable_existing_loggers": false,
+    "formatters": {
+        "main_format": {
+            "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+        }
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "stream": "ext://sys.stdout",
+            "formatter": "main_format",
+            "level": "DEBUG"
+        },
+        "file": {
+            "class": "logging.handlers.TimedRotatingFileHandler",
+            "filename": "logs/kitchen_bot.log",
+            "when": "W0",
+            "delay": true,
+            "encoding": "utf-8",
+            "backupCount": 14,
+            "formatter": "main_format",
+            "level": "INFO"
+        }
+    },
+    "loggers": {
+        "": {
+            "handlers": [
+                "console",
+                "file"
+            ],
+            "level": "DEBUG"
+        }
+    }
+}

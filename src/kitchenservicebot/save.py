@@ -1,6 +1,10 @@
 import json
+import logging
+from pathlib import Path
 
 from kitchenservicebot.enums import Weekday
+
+logger = logging.getLogger(__name__)
 
 
 class Save:
@@ -18,7 +22,7 @@ class Save:
 
     def load_save_file(self) -> None:
         try:
-            with open("savefile.json") as savefile:
+            with Path("savefile.json").open() as savefile:
                 save_dict = json.load(savefile)
                 self.worker_ids = save_dict["workers"]
                 self.current_worker_id = save_dict["current_worker"]
@@ -28,11 +32,11 @@ class Save:
                 self.week_idx = save_dict["week_idx"]
                 self.channel = save_dict["channel"]
         except FileNotFoundError:
-            print("No savefile found. Created one")
+            logger.info("No savefile found. Created one")
             self.save_to_file()
 
     def save_to_file(self) -> None:
-        with open("savefile.json", "w") as savefile:
+        with Path("savefile.json").open("w") as savefile:
             json.dump(
                 {
                     "workers": self.worker_ids,
@@ -47,7 +51,7 @@ class Save:
                 indent=4,
             )
             savefile.close()
-        print("Saved configuration to file")
+        logger.info("Saved configuration to %s", savefile.name)
 
     def get_user_by_id(self, idx: int) -> str:
         return "<@" + str(idx) + ">"

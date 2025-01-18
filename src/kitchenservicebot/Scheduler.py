@@ -1,8 +1,11 @@
+import logging
 from collections.abc import Callable
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 from kitchenservicebot.save import Save
+
+logger = logging.getLogger(__name__)
 
 
 class WeeklyScheduler:
@@ -16,7 +19,7 @@ class WeeklyScheduler:
         self.scheduler.start()
 
     def update_jobs(self) -> None:
-        print("Updated Job Schedule")
+        logger.info("Updated Job Schedule")
         self.save.load_save_file()
         self.scheduler.remove_all_jobs()
         self.scheduler.add_job(

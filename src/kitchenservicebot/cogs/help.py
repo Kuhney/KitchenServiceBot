@@ -1,10 +1,18 @@
+import logging
+from typing import TYPE_CHECKING
+
 import discord
 from discord import ApplicationContext
 from discord.ext import commands
 
+if TYPE_CHECKING:
+    from kitchenservicebot.bot import KitchenBot
+
+logger = logging.getLogger("kitchenbot.cogs")
+
 
 class Help(commands.Cog):
-    def __init__(self, bot) -> None:
+    def __init__(self, bot: "KitchenBot") -> None:
         self.bot = bot
 
     @discord.slash_command(name="help", description="Infos über den Küchendienst Bot")
@@ -16,5 +24,5 @@ class Help(commands.Cog):
         embed.add_field(name="`/weiter`", value="Spult eine Woche vor", inline=False)
         embed.add_field(name="`/aushilfestart`", value="Startet die Aushilfe diese Woche", inline=False)
 
-        print("bot answered to |help| command issued by " + ctx.user.display_name)
+        logger.info("bot answered to |help| command issued by %s", ctx.user.display_name)
         await ctx.respond(embed=embed)
