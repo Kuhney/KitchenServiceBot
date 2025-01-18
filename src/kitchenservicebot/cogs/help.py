@@ -1,14 +1,25 @@
+"""Help Cog."""
+
+import logging
+
 import discord
 from discord import ApplicationContext
 from discord.ext import commands
 
+logger = logging.getLogger("kitchenbot.cogs")
+
 
 class Help(commands.Cog):
-    def __init__(self, bot):
-        self.bot = bot
+    """Help Cog."""
 
-    @discord.slash_command(name="help", description="Infos über den Küchendienst Bot")
-    async def kit_help(self, ctx: ApplicationContext):
+    @discord.slash_command(name="kommandos", description="Kommandos zum Steuern des Küchendienst Bots")
+    async def kit_help(self, ctx: ApplicationContext) -> None:
+        """Command to show a help message with commandos.
+
+        Args:
+            ctx (ApplicationContext): The context of the command
+
+        """
         embed = discord.Embed(title="Küchendienst Bot Commands")
         embed.add_field(name="`/help`", value="Ruft diese Nachricht auf", inline=False)
         embed.add_field(name="`/setup`", value="Richtet den Küchendienst ein!", inline=False)
@@ -16,5 +27,5 @@ class Help(commands.Cog):
         embed.add_field(name="`/weiter`", value="Spult eine Woche vor", inline=False)
         embed.add_field(name="`/aushilfestart`", value="Startet die Aushilfe diese Woche", inline=False)
 
-        print("bot answered to |help| command issued by " + ctx.user.display_name)
+        logger.info("bot answered to </kommandos> command issued by %s", ctx.user.display_name)
         await ctx.respond(embed=embed)

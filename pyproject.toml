@@ -1,0 +1,21 @@
+[project]
+name = "kitchenservicebot"
+version = "0.1.0"
+description = "A small bot for discord, which reminds people in a household when they have to do the kitchen"
+readme = "README.md"
+authors = [
+    { name = "Kuhney", email = "42678994+Kuhney@users.noreply.github.com" }
+]
+requires-python = ">=3.12"
+license = "MIT"
+dependencies = [
+    "apscheduler>=3.11.0",
+    "py-cord>=2.6.1",
+]
+
+[project.scripts]
+kitchenservicebot = "kitchenservicebot.main:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
