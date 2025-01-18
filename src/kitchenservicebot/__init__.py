@@ -1,0 +1,1 @@
+"""Kitchenservicebot package."""

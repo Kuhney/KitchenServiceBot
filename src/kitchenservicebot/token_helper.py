@@ -1,3 +1,5 @@
+"""Get token for discord bot in json file."""
+
 import json
 import sys
 from pathlib import Path
