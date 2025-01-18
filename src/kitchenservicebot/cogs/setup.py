@@ -62,7 +62,7 @@ class TimeInputModal(discord.ui.Modal):
         super().__init__(title=title)
         self.save = config
         self.scheduler = scheduler
-        self.add_item(discord.ui.InputText(label="Uhrzeit zum Wechseln des Küchendienstes (0-24)"))
+        self.add_item(discord.ui.InputText(label="Uhrzeit zum Wechseln (0-24)"))
 
     async def callback(self, interaction: discord.Interaction) -> None:
         """Call when the time modal is submitted."""
